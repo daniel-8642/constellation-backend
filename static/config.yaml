@@ -1,0 +1,9 @@
+Web:
+  port: 3306
+Mysql:
+  driverName: mysql
+  user: root
+  password: taotao
+  ip: 127.0.0.1
+  port: 3306
+  database: starWeb
