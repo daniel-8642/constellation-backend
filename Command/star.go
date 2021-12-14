@@ -1,4 +1,4 @@
-package DataQuery
+package Command
 
 import (
 	"fmt"

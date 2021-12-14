@@ -1,4 +1,4 @@
-package Config
+package Global
 
 import (
 	"fmt"
