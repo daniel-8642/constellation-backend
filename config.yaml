@@ -1,5 +1,7 @@
 Web:
-  port: 3306
+  port: 8080
+  static: "./static"
+  base_url: "/web"
 Mysql:
   driverName: mysql
   user: root

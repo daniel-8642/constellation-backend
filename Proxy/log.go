@@ -9,26 +9,23 @@ import (
 	"time"
 )
 
-var dataSourceName = "root:taotao@(127.0.0.1:3306)/starWeb"
+var dataSourceName string
+var driverName string
 
 func init() {
-
+	Mysql := Config.GetMysql()
+	dataSourceName = Mysql.User + ":" + Mysql.Password + "@(" + Mysql.Ip + ":" + Mysql.Port + ")/" + Mysql.Database
+	driverName = Mysql.DriverName
 	//开启时检查数据库连接
-	db, _ := sql.Open("mysql", dataSourceName)
+	db, _ := sql.Open(Mysql.DriverName, dataSourceName)
 	//数据库连接
 	err := db.Ping()
 	if err != nil {
 		panic("数据库链接失败")
 	}
-	defer db.Close()
-
-	////多行查询
-	//rows, _ := db.Query("select * from starLog")
-	//var id string
-	//for rows.Next() {
-	//	rows.Scan(&id)
-	//	fmt.Println(id)
-	//}
+	defer func(db *sql.DB) {
+		_ = db.Close()
+	}(db)
 }
 
 func Log(c *gin.Context) {
@@ -37,12 +34,15 @@ func Log(c *gin.Context) {
 	ip := getRequestIP(c)
 	times := time.Now().Format("2006-01-02 15:04:05")
 	go func(conName string, ip string, times string) {
-		fmt.Print(" consName: " + conName)
-		fmt.Print(" ip: " + ip)
-		fmt.Println(" time: " + times)
-
-		db, _ := sql.Open("mysql", "root:taotao@(127.0.0.1:3306)/starWeb")
-		defer db.Close()
+		if len(dataSourceName) == 0 || len(driverName) == 0 {
+			Mysql := Config.GetMysql()
+			dataSourceName = Mysql.User + ":" + Mysql.Password + "@(" + Mysql.Ip + ":" + Mysql.Port + ")/" + Mysql.Database
+			driverName = Mysql.DriverName
+		}
+		db, _ := sql.Open(driverName, dataSourceName)
+		defer func(db *sql.DB) {
+			_ = db.Close()
+		}(db)
 		sqlStr := "insert into starLog(consName, ip,time) values (?,?,?)"
 		/*ret*/
 		_, err := db.Exec(sqlStr, consName, ip, times)
