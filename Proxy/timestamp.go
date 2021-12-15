@@ -1,6 +1,7 @@
 package Proxy
 
 import (
+	"crypto/md5"
 	"crypto/sha256"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -13,14 +14,31 @@ import (
 
 func SessionTimestamp(c *gin.Context) {
 	session := c.Param("session")
-	Hsession := c.Request.Header.Get("session")
-	if session != Hsession {
-		// 验证不通过，不再调用后续的函数处理
+	stamp, _ := strconv.ParseInt(c.Request.Header.Get("timestamp"), 10, 64)
+	now := time.Now().UnixMilli()
+	if now-stamp > 3000 || now-stamp < -300 {
 		c.Abort()
-		c.JSON(http.StatusUnauthorized, gin.H{"message": "参数不匹配"})
+		c.JSON(http.StatusUnauthorized, gin.H{"message": "签名已失效"})
 		// return可省略, 只要前面执行Abort()就可以让后面的handler函数不再执行
 		return
 	}
+	rand := c.Request.Header.Get("rand")
+	sign := c.Request.Header.Get("sign")
+
+	md5session := fmt.Sprintf("%x", md5.Sum([]byte(session)))
+	sum := sha256.Sum256([]byte(md5session + strconv.FormatInt(stamp, 10) + Global.GetWeb().Key + rand))
+	sums := fmt.Sprintf("%x", sum)
+	if strings.Compare(sums, sign) != 0 {
+		c.Abort()
+		c.JSON(http.StatusUnauthorized, gin.H{"message": "签名不匹配"})
+		return
+	}
+	c.Next()
+
+}
+
+func AccountTimestamp(c *gin.Context) {
+	session := c.Param("session")
 	stamp, _ := strconv.ParseInt(c.Request.Header.Get("timestamp"), 10, 64)
 	now := time.Now().UnixMilli()
 	if now-stamp > 3000 || now-stamp < -300 {
@@ -41,38 +59,5 @@ func SessionTimestamp(c *gin.Context) {
 		return
 	}
 	c.Next()
-
-}
-
-func AccountTimestamp(c *gin.Context) {
-	//session := c.Param("session")
-	//Hsession := c.Request.Header.Get("session")
-	//if session != Hsession {
-	//	// 验证不通过，不再调用后续的函数处理
-	//	c.Abort()
-	//	c.JSON(http.StatusUnauthorized,gin.H{"message":"参数不匹配"})
-	//	// return可省略, 只要前面执行Abort()就可以让后面的handler函数不再执行
-	//	return
-	//}
-	//stamp, _ := strconv.ParseInt(c.Request.Header.Get("timestamp"),10,64)
-	//now:= time.Now().UnixMilli()
-	//if now-stamp>3000 || now-stamp< -300 {
-	//	c.Abort()
-	//	c.JSON(http.StatusUnauthorized,gin.H{"message":"签名已失效"})
-	//	// return可省略, 只要前面执行Abort()就可以让后面的handler函数不再执行
-	//	return
-	//}
-	//
-	//rand := c.Request.Header.Get("rand")
-	//sign := c.Request.Header.Get("sign")
-	//
-	//sum := sha256.Sum256([]byte(session + strconv.FormatInt(stamp,10) + Global.GetWeb().Key + rand))
-	//sums:= fmt.Sprintf("%x", sum)
-	//if strings.Compare(sums,sign)!=0 {
-	//	c.Abort()
-	//	c.JSON(http.StatusUnauthorized,gin.H{"message":"签名不匹配"})
-	//	return
-	//}
-	//c.Next()
 
 }

@@ -39,7 +39,7 @@ func Login(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{"message": "访问未授权"})
 		return
 	}
-	c.String(http.StatusOK, fmt.Sprintf("%s", session)) //输出
+	c.JSON(http.StatusOK, gin.H{"session": session})
 }
 
 func Adduser(c *gin.Context) {
@@ -63,13 +63,27 @@ func Adduser(c *gin.Context) {
 	}
 }
 
-//
-//func AdminAdduser(c *gin.Context) {
-//	name:=c.Param("name")
-//	upass:=c.Param("upass")
-//	uauth:=c.Param("uauth")
-//	c.String(http.StatusOK, fmt.Sprintf("%s", body)) //输出
-//}
+func AdminAdduser(c *gin.Context) {
+	name := c.Param("name")
+	upass := c.Param("upass")
+	uauth := c.Param("uauth")
+	sql := "insert into user (uname, upass, uauth) " +
+		"values ( ? , ? ,?);"
+	result, err := Global.DB.Exec(sql, name, upass, uauth)
+	if err != nil {
+		return
+	}
+	rowsaffected, err := result.RowsAffected()
+	if err != nil {
+		fmt.Printf("Get RowsAffected failed,err:%v", err)
+		return
+	}
+	if rowsaffected != 0 {
+		c.String(http.StatusOK, fmt.Sprintf("{%s}", "ok")) //输出
+	} else {
+		c.String(http.StatusBadGateway, fmt.Sprintf("{%s}", "error")) //输出
+	}
+}
 
 //更改密码接口
 func Setuserpass(c *gin.Context) {

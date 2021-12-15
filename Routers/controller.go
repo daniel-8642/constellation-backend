@@ -22,17 +22,17 @@ func setUpUser(api *gin.Engine) {
 	//注册用户接口
 	api.POST("/user/:name/:upass", Command.Adduser)
 	//管理员注册用户接口
-	//api.POST("/user/:session/:name/:upass/:uauth",Command.AdminAdduser)
+	api.POST("/user/:name/:upass/:session/:uauth", Proxy.SessionTimestamp, Command.AdminAdduser)
 	//用户更改密码接口
-	api.PUT("/user/:session/:oldupass/:newupass", Command.Setuserpass)
+	api.PUT("/user/:session/:oldupass/:newupass", Proxy.SessionAuth, Proxy.SessionTimestamp, Command.Setuserpass)
 	//删除用户接口
-	api.DELETE("/user/:session/:name/:upass", Command.Deluser)
+	api.DELETE("/user/:session/:name/:upass", Proxy.SessionAuth, Proxy.SessionTimestamp, Command.Deluser)
 	//获取用户权限接口
-	api.GET("/user/auth/:session", Command.Getuserauth)
+	api.GET("/user/auth/:session", Proxy.SessionAuth, Proxy.SessionTimestamp, Command.Getuserauth)
 }
 func setUpData(api *gin.Engine) {
 	//查询近期访问历史接口
-	api.GET("/data/querycount/:session", Command.Querycount)
+	api.GET("/data/querycount/:session", Proxy.SessionAuth, Proxy.SessionTimestamp, Command.Querycount)
 	//查询各个星座人数接口
 	api.GET("/data/starcount/:session", Proxy.SessionAuth, Proxy.SessionTimestamp, Command.Starcount)
 }
