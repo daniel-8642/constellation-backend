@@ -22,5 +22,5 @@ func setUpUser(api *gin.Engine) {
 	//api.DELETE("/user/:session/:name/:upass",Command.Deluser)
 	//api.GET("/user/auth/:session",Command.Getuserauth)
 	//api.GET("/data/querycount/:session",Command.Querycount)
-	api.GET("/data/starcount/:session", Proxy.SessionAuth, Command.Starcount)
+	api.GET("/data/starcount/:session", Proxy.SessionAuth, Proxy.SessionTimestamp, Command.Starcount)
 }

@@ -2,6 +2,7 @@ Web:
   port: 8080
   static: "./static"
   base_url: "/web"
+  key: "3kEx*Jm9vGN3UKGaalpk"
 Mysql:
   driverName: mysql
   user: root

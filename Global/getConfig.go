@@ -15,6 +15,7 @@ type Web struct {
 	Port    string `yaml:"port"`
 	Static  string `yaml:"static"`
 	BaseUrl string `yaml:"base_url"`
+	Key     string `yaml:"key"`
 }
 type Mysql struct {
 	DriverName string `yaml:"driverName"`
