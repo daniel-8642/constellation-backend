@@ -1,11 +1,25 @@
-create table starWeb.starLog
+create table session
+(
+    uid      int auto_increment,
+    session  varchar(20) not null,
+    lasttime datetime    not null,
+    constraint session_session_uindex
+        unique (session),
+    constraint session_uid_uindex
+        unique (uid)
+);
+
+alter table session
+    add primary key (uid);
+
+create table starLog
 (
     consName varchar(10) null,
     ip       varchar(20) null,
-    time     datetime    not null
+    time     date        not null
 );
 
-create table starWeb.user
+create table user
 (
     uid   bigint auto_increment,
     uname varchar(20) not null,
@@ -17,5 +31,6 @@ create table starWeb.user
         unique (uname)
 );
 
-alter table starWeb.user
+alter table user
     add primary key (uid);
+

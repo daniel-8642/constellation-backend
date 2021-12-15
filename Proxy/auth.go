@@ -30,22 +30,6 @@ func SessionAuth(c *gin.Context) {
 	}
 	c.Next()
 }
-func AccountAuth(c *gin.Context) {
-	//c.Param("name")
-	//c.Param("upass")
-	////sqlStr := "select lasttime from session where session= '" + session + "' limit 1"
-	//Row := Global.DB.QueryRow(sqlStr)
-	//var lasttime string
-	//err := Row.Scan(&lasttime)
-	//if err != nil {
-	//	fmt.Println(err)
-	//	c.Abort()
-	//	c.JSON(http.StatusUnauthorized, gin.H{"message": "访问未授权"})
-	//	return
-	//}
-	//fmt.Println(lasttime)
-	//c.Next()
-}
 
 func ConfigAuth(authNum int) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -63,7 +47,7 @@ func ConfigAuth(authNum int) gin.HandlerFunc {
 		}
 		if auth > authNum {
 			c.Abort()
-			c.JSON(http.StatusUnauthorized, gin.H{"message": "登录已过期"})
+			c.JSON(http.StatusUnauthorized, gin.H{"message": "权限不足"})
 			return
 		}
 		c.Next()

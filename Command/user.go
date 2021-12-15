@@ -67,6 +67,11 @@ func AdminAdduser(c *gin.Context) {
 	name := c.Param("name")
 	upass := c.Param("upass")
 	uauth := c.Param("uauth")
+	parseInt, err := strconv.ParseInt(uauth, 10, 8)
+	if err != nil || parseInt > 100 || parseInt <= 0 {
+		c.String(http.StatusBadGateway, fmt.Sprintf("{%s}", "权限输入错误")) //输出
+		return
+	}
 	sql := "insert into user (uname, upass, uauth) " +
 		"values ( ? , ? ,?);"
 	result, err := Global.DB.Exec(sql, name, upass, uauth)
@@ -154,7 +159,7 @@ func Getuserauth(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{"message": "内部错误"})
 		return
 	}
-	c.String(http.StatusOK, fmt.Sprintf("%d", auth)) //输出
+	c.JSON(http.StatusOK, gin.H{"auth": auth}) //输出
 }
 
 func delSessionForSession(session string) bool {
