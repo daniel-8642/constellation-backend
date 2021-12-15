@@ -32,7 +32,7 @@ func setUpUser(api *gin.Engine) {
 }
 func setUpData(api *gin.Engine) {
 	//查询近期访问历史接口
-	api.GET("/data/querycount/:session", Proxy.SessionAuth, Proxy.SessionTimestamp, Command.Querycount)
+	api.GET("/data/querycount/:session", Proxy.SessionAuth, Proxy.ConfigAuth(50), Proxy.SessionTimestamp, Command.Querycount)
 	//查询各个星座人数接口
-	api.GET("/data/starcount/:session", Proxy.SessionAuth, Proxy.SessionTimestamp, Command.Starcount)
+	api.GET("/data/starcount/:session", Proxy.SessionAuth, Proxy.ConfigAuth(50), Proxy.SessionTimestamp, Command.Starcount)
 }
