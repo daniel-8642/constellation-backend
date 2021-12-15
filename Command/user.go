@@ -42,12 +42,27 @@ func Login(c *gin.Context) {
 	c.String(http.StatusOK, fmt.Sprintf("%s", session)) //输出
 }
 
-//func Adduser(c *gin.Context) {
-//	name:=c.Param("name")
-//	upass:=c.Param("upass")
-//	uauth:=c.Param("uauth")
-//	c.String(http.StatusOK, fmt.Sprintf("%s", body)) //输出
-//}
+func Adduser(c *gin.Context) {
+	name := c.Param("name")
+	upass := c.Param("upass")
+	sql := "insert into user (uname, upass, uauth) " +
+		"values ( ? , ? ,50);"
+	result, err := Global.DB.Exec(sql, name, upass)
+	if err != nil {
+		return
+	}
+	rowsaffected, err := result.RowsAffected()
+	if err != nil {
+		fmt.Printf("Get RowsAffected failed,err:%v", err)
+		return
+	}
+	if rowsaffected != 0 {
+		c.String(http.StatusOK, fmt.Sprintf("{%s}", "ok")) //输出
+	} else {
+		c.String(http.StatusBadGateway, fmt.Sprintf("{%s}", "error")) //输出
+	}
+}
+
 //
 //func AdminAdduser(c *gin.Context) {
 //	name:=c.Param("name")
@@ -80,14 +95,67 @@ func Setuserpass(c *gin.Context) {
 		c.String(http.StatusBadGateway, fmt.Sprintf("{%s}", "error")) //输出
 	}
 	//清空session
-
+	delSessionForSession(session)
 }
 
-//func Deluser(c *gin.Context) {
-//	name:=c.Param("name")
-//	upass:=c.Param("upass")
-//	c.String(http.StatusOK, fmt.Sprintf("%s", body)) //输出
-//}
-//func Getuserauth(c *gin.Context) {
-//	c.String(http.StatusOK, fmt.Sprintf("%s", body)) //输出
-//}
+func Deluser(c *gin.Context) {
+	session := c.Param("session")
+	name := c.Param("name")
+	upass := c.Param("upass")
+	//更新账户数据
+	sql := "delete from user where uid = (" +
+		"select uid from session where session = ? limit 1" +
+		") and uname= ? and upass = ? limit 1;"
+	result, err := Global.DB.Exec(sql, session, name, upass)
+	if err != nil {
+		fmt.Println("DataBase err ,err:", err)
+		return
+	}
+	rowsaffected, err := result.RowsAffected()
+	if err != nil {
+		fmt.Printf("Get RowsAffected failed,err:%v \n", err)
+		return
+	}
+
+	if rowsaffected != 0 {
+		c.String(http.StatusOK, fmt.Sprintf("{%s}", "ok")) //输出
+	} else {
+		c.String(http.StatusBadGateway, fmt.Sprintf("{%s}", "error")) //输出
+	}
+	//清空session
+	delSessionForSession(session)
+}
+
+func Getuserauth(c *gin.Context) {
+	session := c.Param("session")
+	sql := "select uauth from user where uid = (" +
+		"select uid from session where session = ? limit 1" +
+		") limit 1;"
+	Row := Global.DB.QueryRow(sql, session)
+	var auth int
+	err := Row.Scan(&auth)
+	if err != nil {
+		fmt.Println(err)
+		c.Abort()
+		c.JSON(http.StatusUnauthorized, gin.H{"message": "内部错误"})
+		return
+	}
+	c.String(http.StatusOK, fmt.Sprintf("%d", auth)) //输出
+}
+
+func delSessionForSession(session string) bool {
+	//更新账户数据
+	sql := "delete from session " +
+		"where session = ? limit 1;"
+	result, err := Global.DB.Exec(sql, session)
+	if err != nil {
+		fmt.Println("DataBase err ,err:", err)
+		return false
+	}
+	rowsaffected, err := result.RowsAffected()
+	if err != nil {
+		fmt.Printf("Get RowsAffected failed,err:%v \n", err)
+		return false
+	}
+	return rowsaffected != 0
+}
