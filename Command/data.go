@@ -8,12 +8,37 @@ import (
 	"starWebserver/Global"
 )
 
-//func Querycount(c *gin.Context) {
-//	c.String(http.StatusOK, fmt.Sprintf("%s", body)) //输出
-//}
+func Querycount(c *gin.Context) {
+	sql := "select time ,count(*) from starLog " +
+		"group by time order by time DESC limit 14;"
+	Rows, err := Global.DB.Query(sql)
+	if err != nil {
+		fmt.Println(err)
+		c.Abort()
+		c.JSON(http.StatusUnauthorized, gin.H{"message": "访问未授权"})
+		return
+	}
+	ret := map[string]string{}
+	for Rows.Next() {
+		var name, count string
+		err := Rows.Scan(&name, &count)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		if len(name) != 0 {
+			ret[name] = count
+		}
+	}
+	marshal, err := json.Marshal(ret)
+	if err != nil {
+		fmt.Println(err)
+	}
+	c.String(http.StatusOK, fmt.Sprintf("%s", marshal)) //输出
+}
 
 func Starcount(c *gin.Context) {
-	sql := "select consName, count(*) from " + Global.GetMysql().Database + ".starLog group by consName order by consName"
+	sql := "select consName, count(*) from " + Global.GetMysql().Database + ".starLog group by consName order by consName limit 10"
 	Rows, err := Global.DB.Query(sql)
 	if err != nil {
 		fmt.Println(err)

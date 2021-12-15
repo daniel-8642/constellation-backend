@@ -24,6 +24,6 @@ func setUpUser(api *gin.Engine) {
 	//api.GET("/user/auth/:session",Command.Getuserauth)
 }
 func setUpData(api *gin.Engine) {
-	//api.GET("/data/querycount/:session",Command.Querycount)
+	api.GET("/data/querycount/:session", Command.Querycount)
 	api.GET("/data/starcount/:session", Proxy.SessionAuth, Proxy.SessionTimestamp, Command.Starcount)
 }

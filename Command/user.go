@@ -10,6 +10,7 @@ import (
 	"time"
 )
 
+//登录接口
 func Login(c *gin.Context) {
 	name := c.Param("name")
 	upass := c.Param("upass")
@@ -55,6 +56,7 @@ func Login(c *gin.Context) {
 //	c.String(http.StatusOK, fmt.Sprintf("%s", body)) //输出
 //}
 
+//更改密码接口
 func Setuserpass(c *gin.Context) {
 	session := c.Param("session")
 	oldupass := c.Param("oldupass")
