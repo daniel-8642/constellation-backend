@@ -19,7 +19,7 @@ func setUpUser(api *gin.Engine) {
 	api.GET("/user/login/:name/:upass", Command.Login)
 	//api.POST("/user/:name/upass/:uauth",Command.Adduser)
 	//api.POST("/user/:session/:name/:upass/:uauth",Command.AdminAdduser)
-	//api.PUT("/user/:session/:oldupass/:newupass",Command.Setuserpass)
+	api.PUT("/user/:session/:oldupass/:newupass", Command.Setuserpass)
 	//api.DELETE("/user/:session/:name/:upass",Command.Deluser)
 	//api.GET("/user/auth/:session",Command.Getuserauth)
 }

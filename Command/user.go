@@ -13,7 +13,8 @@ import (
 func Login(c *gin.Context) {
 	name := c.Param("name")
 	upass := c.Param("upass")
-	sqlStr := "select uid from user where uname = ? and upass = ? limit 1"
+	sqlStr := "select uid from user " +
+		"where uname = ? and upass = ? limit 1"
 	Row := Global.DB.QueryRow(sqlStr, name, upass)
 	var uid string
 	err := Row.Scan(&uid)
@@ -53,12 +54,33 @@ func Login(c *gin.Context) {
 //	uauth:=c.Param("uauth")
 //	c.String(http.StatusOK, fmt.Sprintf("%s", body)) //输出
 //}
-//
-//func Setuserpass(c *gin.Context) {
-//	oldupass:=c.Param("oldupass")
-//	newupass:=c.Param("newupass")
-//	c.String(http.StatusOK, fmt.Sprintf("%s", body)) //输出
-//}
+
+func Setuserpass(c *gin.Context) {
+	session := c.Param("session")
+	oldupass := c.Param("oldupass")
+	newupass := c.Param("newupass")
+	//更新账户数据
+	result, err := Global.DB.Exec("update user set upass = ? where uid= ("+
+		" select uid from session where session = ? limit 1 "+
+		") and upass= ? ;", newupass, session, oldupass)
+	if err != nil {
+		return
+	}
+	rowsaffected, err := result.RowsAffected()
+	if err != nil {
+		fmt.Printf("Get RowsAffected failed,err:%v", err)
+		return
+	}
+
+	if rowsaffected != 0 {
+		c.String(http.StatusOK, fmt.Sprintf("{%s}", "ok")) //输出
+	} else {
+		c.String(http.StatusBadGateway, fmt.Sprintf("{%s}", "error")) //输出
+	}
+	//清空session
+
+}
+
 //func Deluser(c *gin.Context) {
 //	name:=c.Param("name")
 //	upass:=c.Param("upass")
