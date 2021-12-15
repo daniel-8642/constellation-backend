@@ -16,6 +16,8 @@ func SessionTimestamp(c *gin.Context) {
 	session := c.Param("session")
 	stamp, _ := strconv.ParseInt(c.Request.Header.Get("timestamp"), 10, 64)
 	now := time.Now().UnixMilli()
+	fmt.Println(stamp)
+	fmt.Println(now)
 	if now-stamp > 3000 || now-stamp < -300 {
 		c.Abort()
 		c.JSON(http.StatusUnauthorized, gin.H{"message": "签名已失效"})
