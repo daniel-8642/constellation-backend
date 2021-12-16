@@ -1,7 +1,6 @@
 package Command
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -18,23 +17,27 @@ func Querycount(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{"message": "访问未授权"})
 		return
 	}
-	ret := map[string]string{}
+	var ret []querycountVo
 	for Rows.Next() {
-		var name, count string
-		err := Rows.Scan(&name, &count)
+		var date, count string
+		err := Rows.Scan(&date, &count)
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
-		if len(name) != 0 {
-			ret[name] = count
+		if len(date) != 0 {
+			ret = append(ret, querycountVo{
+				Date:  date,
+				Count: count,
+			})
 		}
 	}
-	marshal, err := json.Marshal(ret)
-	if err != nil {
-		fmt.Println(err)
-	}
-	c.String(http.StatusOK, fmt.Sprintf("%s", marshal)) //输出
+	c.JSON(http.StatusOK, gin.H{"data": ret}) //输出
+}
+
+type querycountVo struct {
+	Date  string `json:"date"`
+	Count string `json:"count"`
 }
 
 func Starcount(c *gin.Context) {
@@ -46,7 +49,7 @@ func Starcount(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{"message": "访问未授权"})
 		return
 	}
-	ret := map[string]string{}
+	var ret []starcountVo
 	for Rows.Next() {
 		var name, count string
 		err := Rows.Scan(&name, &count)
@@ -55,12 +58,16 @@ func Starcount(c *gin.Context) {
 			return
 		}
 		if len(name) != 0 {
-			ret[name] = count
+			ret = append(ret, starcountVo{
+				Name:  name,
+				Count: count,
+			})
 		}
 	}
-	marshal, err := json.Marshal(ret)
-	if err != nil {
-		fmt.Println(err)
-	}
-	c.String(http.StatusOK, fmt.Sprintf("%s", marshal)) //输出
+	c.JSON(http.StatusOK, gin.H{"data": ret}) //输出
+}
+
+type starcountVo struct {
+	Name  string `json:"name"`
+	Count string `json:"count"`
 }

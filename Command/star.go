@@ -33,8 +33,13 @@ func Star(c *gin.Context) {
 	} else {
 		body, _ = responseBuffer[consName]
 	}
-
-	c.String(http.StatusOK, fmt.Sprintf("%s", body)) //输出
+	ret := fmt.Sprintf("%s", body)
+	if strings.HasSuffix(ret, "\"resultcode\":\"200\"") {
+		c.Set("log", true)
+	} else {
+		c.Set("log", false)
+	}
+	c.String(http.StatusOK, ret) //输出
 }
 
 func netQuery(consName string, type_ string, key string) []byte {
