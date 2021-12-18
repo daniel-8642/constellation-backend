@@ -31,8 +31,8 @@ func setUpUser(api *gin.Engine) {
 	api.DELETE("/user/:session/:name/:upass",
 		Proxy.SessionAuth, Proxy.SessionTimestamp, Command.Deluser)
 	//获取用户权限接口
-	api.GET("/user/auth/:session", Proxy.
-		SessionAuth, Proxy.SessionTimestamp, Command.Getuserauth)
+	api.GET("/user/auth/:session",
+		Proxy.SessionAuth, Proxy.SessionTimestamp, Command.Getuserauth)
 }
 func setUpData(api *gin.Engine) {
 	//查询近期访问历史接口

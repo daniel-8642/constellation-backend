@@ -23,7 +23,7 @@ func Login(c *gin.Context) {
 		//todo:编写错误信息
 		fmt.Println(err)
 		c.Abort()
-		c.JSON(http.StatusUnauthorized, gin.H{"message": "访问未授权"})
+		c.JSON(http.StatusUnauthorized, gin.H{"message": "用户名或密码错误"})
 		return
 	}
 	Now := time.Now().Format("2006-01-02 15:04:05")

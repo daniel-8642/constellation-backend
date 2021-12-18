@@ -24,6 +24,7 @@ func Log(c *gin.Context) {
 	var b = value.(bool)
 	if exists && b {
 		go func(conName string, ip string, times string) {
+			fmt.Printf("log")
 			sqlStr := "insert into starLog(consName, ip,time) values (?,?,?)"
 			_, err := Global.DB.Exec(sqlStr, consName, ip, times)
 			if err != nil {
