@@ -34,7 +34,8 @@ func Star(c *gin.Context) {
 		body, _ = responseBuffer[consName]
 	}
 	ret := fmt.Sprintf("%s", body)
-	if strings.HasSuffix(ret, "\"resultcode\":\"200\"") {
+	fmt.Println(ret)
+	if strings.Contains(ret, "\"resultcode\":\"200\"") {
 		c.Set("log", true)
 	} else {
 		c.Set("log", false)
