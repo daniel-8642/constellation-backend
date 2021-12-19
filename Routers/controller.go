@@ -7,6 +7,7 @@ import (
 )
 
 func SetUpRouter(api *gin.Engine) {
+	api.Use(Proxy.Cors)
 	setUpStar(api)
 	setUpUser(api)
 	setUpData(api)
