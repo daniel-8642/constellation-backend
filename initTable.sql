@@ -1,6 +1,7 @@
 create table session
 (
-    uid      int auto_increment,
+    uid      int auto_increment
+        primary key,
     session  varchar(20) not null,
     lasttime datetime    not null,
     constraint session_session_uindex
@@ -8,9 +9,6 @@ create table session
     constraint session_uid_uindex
         unique (uid)
 );
-
-alter table session
-    add primary key (uid);
 
 create table starLog
 (
@@ -21,7 +19,8 @@ create table starLog
 
 create table user
 (
-    uid   bigint auto_increment,
+    uid   bigint auto_increment
+        primary key,
     uname varchar(20) not null,
     upass varchar(64) not null,
     uauth int         not null,
@@ -30,7 +29,3 @@ create table user
     constraint user_uname_uindex
         unique (uname)
 );
-
-alter table user
-    add primary key (uid);
-
