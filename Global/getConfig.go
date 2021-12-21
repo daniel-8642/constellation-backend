@@ -12,10 +12,12 @@ type Config struct {
 }
 
 type Web struct {
-	Port    string `yaml:"port"`
-	Static  string `yaml:"static"`
-	BaseUrl string `yaml:"base_url"`
-	Key     string `yaml:"key"`
+	Port          string `yaml:"port"`
+	StaticWeb     string `yaml:"static_web"`
+	StaticBackend string `yaml:"static_backend"`
+	WebUrl        string `yaml:"web_url"`
+	BackendUrl    string `yaml:"backend_url"`
+	Key           string `yaml:"key"`
 }
 type Mysql struct {
 	DriverName string `yaml:"driverName"`

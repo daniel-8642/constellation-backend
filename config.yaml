@@ -1,7 +1,9 @@
 Web:
   port: 8080
-  static: "./static"
-  base_url: "/web"
+  static_web: "./static/web"
+  static_backend: "./static/backend"
+  web_url: "/web"
+  backend_url: "/backend"
   key: "3kEx*Jm9vGN3UKGaalpk"
 Mysql:
   driverName: mysql
