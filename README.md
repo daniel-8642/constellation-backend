@@ -50,13 +50,33 @@ Routers 存放路由配置文件
 
 static 存放静态页面文件
 
-config.yaml
+config.yaml 软件配置文件
 
-initTable.sql
+initTable.sql  数据库 表定义
 
 main.go
 
+#### 启动项目
 
+1. 配置数据库
+
+   1. 安装mysql或MariaDB
+   2. 确保数据库可以连接,将连接数据填入config.yaml
+   3. 在数据库新建database(项目中使用的数据库名是starWeb),将数据库名复制到config.yaml的Mysql.database (注意yaml空格与tab敏感, :后需要跟一个空格)
+   4. use 你新建的database, 执行initTable.sql建立表
+
+2. 启动服务
+
+   1. (如果没有修改前台代码,可忽略本步骤)npm build 前台项目,将生成的dist文件夹中文件复制到static/web文件夹(路径与config.yaml 的Web.static_web对应)覆盖本项目中的文件
+   2. (如果没有修改后台代码,可忽略本步骤)npm build 后台项目,将生成的dist文件夹中文件复制到static/backend文件夹(路径与config.yaml 的Web.static_backend对应)覆盖本项目中的文件
+   3. (如果没有修改本项目中代码,可直接使用编译好的可执行文件),安装go环境,使用go build编译本项目
+   4. 运行可执行文件, 运行时需要文件同级存放有config.yaml配置文件,static文件夹,配置文件指向的数据库可连接.
+
+3. 到这里,你的项目应该可以正常运行了,
+
+   星座运势的接口是使用免费的聚合数据的接口.
+
+   配合缓存节约请求次数,你也可以到聚合数据的官网([聚合数据](https://www.juhe.cn/))申请自己的key
 
 
 
