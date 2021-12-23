@@ -1,5 +1,5 @@
 Web:
-  port: 8080
+  port: 80
   static_web: "./static/web"
   static_backend: "./static/backend"
   web_url: "/web"
@@ -9,6 +9,6 @@ Mysql:
   driverName: mysql
   user: root
   password: taotao
-  ip: 127.0.0.1
+  ip: 172.17.0.1
   port: 3306
   database: starWeb

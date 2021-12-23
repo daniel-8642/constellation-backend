@@ -16,7 +16,7 @@ func SessionTimestamp(c *gin.Context) {
 	session := c.Param("session")
 	stamp, _ := strconv.ParseInt(c.Request.Header.Get("timestamp"), 10, 64)
 	now := time.Now().UnixMilli()
-	if now-stamp > 15000 || now-stamp < -1000 {
+	if now-stamp > 15000 || now-stamp < -10000 {
 		c.Abort()
 		c.JSON(http.StatusUnauthorized, gin.H{"message": "签名已失效"})
 		// return可省略, 只要前面执行Abort()就可以让后面的handler函数不再执行

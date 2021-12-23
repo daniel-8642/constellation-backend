@@ -12,9 +12,13 @@ create table session
 
 create table starLog
 (
+    id       int auto_increment
+        primary key,
     consName varchar(10) null,
     ip       varchar(20) null,
-    time     date        not null
+    time     date        not null,
+    constraint starLog_id_uindex
+        unique (id)
 );
 
 create table user
