@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-//登录接口
+// Login 登录接口
 func Login(c *gin.Context) {
 	name := c.Param("name")
 	upass := c.Param("upass")
@@ -90,7 +90,7 @@ func AdminAdduser(c *gin.Context) {
 	}
 }
 
-//更改密码接口
+// Setuserpass 更改密码接口
 func Setuserpass(c *gin.Context) {
 	session := c.Param("session")
 	oldupass := c.Param("oldupass")
