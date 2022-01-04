@@ -28,8 +28,6 @@ func SessionTimestamp(c *gin.Context) {
 	md5session := fmt.Sprintf("%x", md5.Sum([]byte(session)))
 	sum := sha256.Sum256([]byte(md5session + strconv.FormatInt(stamp, 10) + Global.GetWeb().Key + rand))
 	sums := fmt.Sprintf("%x", sum)
-	fmt.Println(sign)
-	fmt.Println(sums)
 	if strings.Compare(sums, sign) != 0 {
 		c.Abort()
 		c.JSON(http.StatusUnauthorized, gin.H{"message": "签名不匹配"})

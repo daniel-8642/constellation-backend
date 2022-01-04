@@ -17,7 +17,7 @@ func main() {
 	api.StaticFS(Web.WebUrl, http.Dir(Web.StaticWeb))
 	api.StaticFS(Web.BackendUrl, http.Dir(Web.StaticBackend))
 	//转发根目录
-	api.Any("/", func(c *gin.Context) {
+	api.GET("/", func(c *gin.Context) {
 		c.Request.URL.Path = Web.WebUrl
 		api.HandleContext(c)
 	})

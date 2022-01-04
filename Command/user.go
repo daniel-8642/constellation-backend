@@ -20,8 +20,6 @@ func Login(c *gin.Context) {
 	var uid string
 	err := Row.Scan(&uid)
 	if err != nil {
-		//todo:编写错误信息
-		fmt.Println(err)
 		c.Abort()
 		c.JSON(http.StatusUnauthorized, gin.H{"message": "用户名或密码错误"})
 		return
@@ -33,10 +31,9 @@ func Login(c *gin.Context) {
 		"on duplicate key update session= ? ,lasttime = ? ;"
 	_, err = Global.DB.Exec(sqlStr, uid, session, Now, session, Now)
 	if err != nil {
-		//todo:编写错误信息
-		fmt.Println(err)
+		fmt.Printf("Get Session failed,err:%v", err)
 		c.Abort()
-		c.JSON(http.StatusUnauthorized, gin.H{"message": "访问未授权"})
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "登录操作失败"})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"session": session})
@@ -59,7 +56,7 @@ func Adduser(c *gin.Context) {
 	if rowsaffected != 0 {
 		c.String(http.StatusOK, fmt.Sprintf("{%s}", "ok")) //输出
 	} else {
-		c.String(http.StatusBadGateway, fmt.Sprintf("{%s}", "error")) //输出
+		c.String(http.StatusForbidden, fmt.Sprintf("{%s}", "添加用户失败,用户可能已经存在")) //输出
 	}
 }
 
@@ -69,7 +66,7 @@ func AdminAdduser(c *gin.Context) {
 	uauth := c.Param("uauth")
 	parseInt, err := strconv.ParseInt(uauth, 10, 8)
 	if err != nil || parseInt > 100 || parseInt <= 0 {
-		c.String(http.StatusBadGateway, fmt.Sprintf("{%s}", "权限输入错误")) //输出
+		c.String(http.StatusForbidden, fmt.Sprintf("{%s}", "权限输入错误")) //输出
 		return
 	}
 	sql := "insert into user (uname, upass, uauth) " +
@@ -86,7 +83,7 @@ func AdminAdduser(c *gin.Context) {
 	if rowsaffected != 0 {
 		c.String(http.StatusOK, fmt.Sprintf("{%s}", "ok")) //输出
 	} else {
-		c.String(http.StatusBadGateway, fmt.Sprintf("{%s}", "error")) //输出
+		c.String(http.StatusForbidden, fmt.Sprintf("{%s}", "管理员身份添加用户失败,用户可能已经存在")) //输出
 	}
 }
 
@@ -111,7 +108,7 @@ func Setuserpass(c *gin.Context) {
 	if rowsaffected != 0 {
 		c.String(http.StatusOK, fmt.Sprintf("{%s}", "ok")) //输出
 	} else {
-		c.String(http.StatusBadGateway, fmt.Sprintf("{%s}", "error")) //输出
+		c.String(http.StatusNotAcceptable, fmt.Sprintf("{%s}", "更改失败")) //输出
 	}
 	//清空session
 	delSessionForSession(session)
@@ -139,7 +136,7 @@ func Deluser(c *gin.Context) {
 	if rowsaffected != 0 {
 		c.String(http.StatusOK, fmt.Sprintf("{%s}", "ok")) //输出
 	} else {
-		c.String(http.StatusBadGateway, fmt.Sprintf("{%s}", "error")) //输出
+		c.String(http.StatusNotAcceptable, fmt.Sprintf("{%s}", "删除失败")) //输出
 	}
 	//清空session
 	delSessionForSession(session)
@@ -156,7 +153,7 @@ func Getuserauth(c *gin.Context) {
 	if err != nil {
 		fmt.Println(err)
 		c.Abort()
-		c.JSON(http.StatusUnauthorized, gin.H{"message": "内部错误"})
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "服务器内部错误"})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"auth": auth}) //输出

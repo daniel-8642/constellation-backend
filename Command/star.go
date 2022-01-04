@@ -19,7 +19,9 @@ func Star(c *gin.Context) {
 	//c.Header("Access-Control-Allow-Origin","*")
 	consName := c.DefaultQuery("consName", "0") //查询关键字
 	if consName == "0" {
-		//todo:错误处理
+		c.Abort()
+		c.JSON(http.StatusAccepted, gin.H{"message": "必须带有星座名称"})
+		return
 	}
 	type_ := "today" // c.DefaultQuery("type", "today")由于缓存原因,仅允许查询今日运势
 	key := c.DefaultQuery("key", "e1f7fff20b301745c64b655e0ef231d7")
@@ -34,7 +36,6 @@ func Star(c *gin.Context) {
 		body, _ = responseBuffer[consName]
 	}
 	ret := fmt.Sprintf("%s", body)
-	fmt.Println(ret)
 	if strings.Contains(ret, "\"resultcode\":\"200\"") {
 		c.Set("log", true)
 	} else {
