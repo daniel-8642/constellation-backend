@@ -10,7 +10,7 @@ func ParamMinLenLImit(lenth int, param string) gin.HandlerFunc {
 		param := c.Param(param)
 		if len(param) < lenth {
 			c.Abort()
-			c.JSON(http.StatusNotAcceptable, gin.H{"message": "参数不正确"})
+			c.JSON(http.StatusNotAcceptable, gin.H{"message": "参数长度过短"})
 			return
 		}
 		c.Next()
