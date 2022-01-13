@@ -41,7 +41,7 @@ type querycountVo struct {
 }
 
 func Starcount(c *gin.Context) {
-	sql := "select consName, count(*) from " + Global.GetMysql().Database + ".starLog group by consName order by consName limit 10"
+	sql := "select consName as name, count(*) as count from " + Global.GetMysql().Database + ".starLog group by consName order by consName limit 12"
 	Rows, err := Global.DB.Query(sql)
 	if err != nil {
 		fmt.Println(err)
