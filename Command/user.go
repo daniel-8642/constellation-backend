@@ -1,9 +1,11 @@
 package Command
 
 import (
+	"bytes"
+	"crypto/rand"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"math/rand"
+	"math/big"
 	"net/http"
 	"starWebserver/Global"
 	"strconv"
@@ -14,8 +16,7 @@ import (
 func Login(c *gin.Context) {
 	name := c.Param("name")
 	upass := c.Param("upass")
-	sqlStr := "select uid from user " +
-		"where uname = ? and upass = ? limit 1"
+	sqlStr := "select uid from user where uname = ? and upass = ? limit 1"
 	Row := Global.DB.QueryRow(sqlStr, name, upass)
 	var uid string
 	err := Row.Scan(&uid)
@@ -25,7 +26,7 @@ func Login(c *gin.Context) {
 		return
 	}
 	Now := time.Now().Format("2006-01-02 15:04:05")
-	session := strconv.FormatUint(rand.Uint64(), 16)
+	session := randomString(16)
 	sqlStr = "insert into session (uid,session,lasttime) " +
 		"values ( ? , ? , ? ) " +
 		"on duplicate key update session= ? ,lasttime = ? ;"
@@ -174,4 +175,17 @@ func delSessionForSession(session string) bool {
 		return false
 	}
 	return rowsaffected != 0
+}
+
+func randomString(len int) string {
+	var container string
+	var str = "abcdefghijklmnopqrstuvwxyz1234567890"
+	b := bytes.NewBufferString(str)
+	length := b.Len()
+	bigInt := big.NewInt(int64(length))
+	for i := 0; i < len; i++ {
+		randomInt, _ := rand.Int(rand.Reader, bigInt)
+		container += string(str[randomInt.Int64()])
+	}
+	return container
 }

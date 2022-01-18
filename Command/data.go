@@ -8,8 +8,7 @@ import (
 )
 
 func Querycount(c *gin.Context) {
-	sql := "select time ,count(*) from starLog " +
-		"group by time order by time DESC limit 14;"
+	sql := "select time ,count(*) from starLog group by time order by time DESC limit 14;"
 	Rows, err := Global.DB.Query(sql)
 	if err != nil {
 		fmt.Println(err)
@@ -19,7 +18,8 @@ func Querycount(c *gin.Context) {
 	}
 	var ret []querycountVo
 	for Rows.Next() {
-		var date, count string
+		var date string
+		var count int
 		err := Rows.Scan(&date, &count)
 		if err != nil {
 			fmt.Println(err)
@@ -37,7 +37,7 @@ func Querycount(c *gin.Context) {
 
 type querycountVo struct {
 	Date  string `json:"date"`
-	Count string `json:"count"`
+	Count int    `json:"count"`
 }
 
 func Starcount(c *gin.Context) {
@@ -51,7 +51,8 @@ func Starcount(c *gin.Context) {
 	}
 	var ret []starcountVo
 	for Rows.Next() {
-		var name, count string
+		var name string
+		var count int
 		err := Rows.Scan(&name, &count)
 		if err != nil {
 			fmt.Println(err)
@@ -69,5 +70,5 @@ func Starcount(c *gin.Context) {
 
 type starcountVo struct {
 	Name  string `json:"name"`
-	Count string `json:"count"`
+	Count int    `json:"count"`
 }
