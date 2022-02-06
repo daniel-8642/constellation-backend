@@ -33,9 +33,9 @@ func Star(c *gin.Context) {
 	if _, ok := responseBuffer[consName]; !ok {
 		body = netQuery(consName, type_, key)
 	} else {
-		body, _ = responseBuffer[consName]
+		body = responseBuffer[consName]
 	}
-	ret := fmt.Sprintf("%s", body)
+	ret := string(body)
 	if strings.Contains(ret, "\"resultcode\":\"200\"") {
 		c.Set("log", true)
 	} else {
