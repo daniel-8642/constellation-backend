@@ -6,18 +6,17 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-var DB = initDataBase()
+var DB *sql.DB
 
-func initDataBase() sql.DB {
+func init() {
 	Mysql := GetMysql()
 	dataSourceName := Mysql.User + ":" + Mysql.Password + "@(" + Mysql.Ip + ":" + Mysql.Port + ")/" + Mysql.Database
 	//开启时检查数据库连接
 	fmt.Println(dataSourceName)
-	db, _ := sql.Open(Mysql.DriverName, dataSourceName)
+	DB, _ = sql.Open(Mysql.DriverName, dataSourceName)
 	////数据库连接
-	err := db.Ping()
+	err := DB.Ping()
 	if err != nil {
 		panic("数据库链接失败")
 	}
-	return *db
 }
